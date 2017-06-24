@@ -3,6 +3,7 @@ package moonlapse.com.padelwear;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.wearable.view.CurvedChildLayoutManager;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableRecyclerView;
 import android.view.View;
@@ -32,5 +33,8 @@ public class MainActivity extends Activity {
 
         });
         lista.setAdapter(adaptador);
+        lista.setCenterEdgeItems(true);
+        lista.setLayoutManager(new CurvedChildLayoutManager(this));
+
     }
 }
