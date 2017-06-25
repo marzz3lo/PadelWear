@@ -2,7 +2,11 @@ package moonlapse.com.padelwear;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -12,11 +16,14 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -32,8 +39,10 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import moonlapse.com.comun.DireccionesGestureDetector;
 import moonlapse.com.comun.Partida;
@@ -71,6 +80,9 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
 
     private static final String MOVIL_ARRANCAR_ACTIVIDAD = "/arrancar_actividad";
     private GoogleApiClient apiClient;
+
+    private static final String ITEM_FOTO = "/item_foto";
+    private static final String ASSET_FOTO = "/asset_foto";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,11 +340,12 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
 
     @Override
     public void onDataChanged(DataEventBuffer eventos) {
-        Log.e("WEAR","onDataChanget ---------------");
+        Log.e("WEAR", "onDataChanget ---------------");
         for (DataEvent evento : eventos) {
-            if (evento.getType() == DataEvent.TYPE_CHANGED) { DataItem item = evento.getDataItem();
+            if (evento.getType() == DataEvent.TYPE_CHANGED) {
+                DataItem item = evento.getDataItem();
                 if (item.getUri().getPath().equals(WEAR_PUNTUACION)) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item) .getDataMap();
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     misP = dataMap.getString(KEY_MIS_PUNTOS);
                     susP = dataMap.getString(KEY_SUS_PUNTOS);
                     misJ = dataMap.getByte(KEY_MIS_JUEGOS);
@@ -340,7 +353,7 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
                     misS = dataMap.getByte(KEY_MIS_SETS);
                     susS = dataMap.getByte(KEY_SUS_SETS);
 
-                    switch (dataMap.getInt(KEY_EQUIPO)){
+                    switch (dataMap.getInt(KEY_EQUIPO)) {
                         case -1:
                             partida.deshacerPunto();
                             break;
@@ -357,20 +370,28 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
                             break;
                     }
 
-                    Log.e("WEAR","getBytes ---------------");
+                    Log.e("WEAR", "getBytes ---------------");
                     runOnUiThread(new Runnable() {
-                        @Override public void run() {
+                        @Override
+                        public void run() {
                             misPuntos.setText(misP);
                             misJuegos.setText(Integer.toString(misJ));
                             misSets.setText(Integer.toString(misS));
                             susPuntos.setText(susP);
                             susJuegos.setText(Integer.toString(susJ));
                             susSets.setText(Integer.toString(susS));
-                            Log.e("WEAR","On UI run setText ---------------");
-                        } });
+                            Log.e("WEAR", "On UI run setText ---------------");
+                        }
+                    });
+                } else if (item.getUri().getPath().equals(ITEM_FOTO)) {
+                    DataMapItem dataMapItem = DataMapItem.fromDataItem(item);
+                    Asset asset = dataMapItem.getDataMap().getAsset(ASSET_FOTO);
+                    LoadBitmapFromAsset tarea = new LoadBitmapFromAsset();
+                    tarea.execute(asset);
                 }
             } else if (evento.getType() == DataEvent.TYPE_DELETED) {
-            } }
+            }
+        }
     }
 
     @Override
@@ -388,4 +409,33 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
 
     }
 
+
+    class LoadBitmapFromAsset extends AsyncTask<Asset, Void, Bitmap> {
+        private static final int TIMEOUT_MS = 2000;
+
+        @Override
+        protected Bitmap doInBackground(Asset... assets) {
+            if (assets.length < 1 || assets[0] == null) {
+                throw new IllegalArgumentException("El asset no puede ser null");
+            }
+            ConnectionResult resultado =
+                    apiClient.blockingConnect(TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            if (!resultado.isSuccess()) {
+                return null;
+            }
+            // convertimos el asset en Stream, bloqueando hasta tenerlo
+            InputStream assetInputStream = Wearable.DataApi.getFdForAsset(apiClient, assets[0]).await().getInputStream();
+            if (assetInputStream == null) {
+                Log.w("Sincronización", "Asset desconocido");
+                return null;
+            }
+            // decodificamos el Stream en un Bitmap
+            return BitmapFactory.decodeStream(assetInputStream);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            ((LinearLayout) findViewById(R.id.fondo)).setBackground(new BitmapDrawable(getResources(), bitmap));
+        }
+    }
 }
