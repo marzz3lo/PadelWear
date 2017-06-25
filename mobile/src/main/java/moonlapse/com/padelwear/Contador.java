@@ -12,10 +12,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
@@ -54,7 +57,8 @@ public class Contador extends Activity implements MessageApi.MessageListener,
     private static final String KEY_SUS_SETS = "moonlapse.com.padel.key.sus_sets";
     private static final String KEY_EQUIPO = "moonlapse.com.padel.key.equipo";
 
-    private byte misP, susP, misJ, susJ, misS, susS;
+    private String misP, susP;
+    private byte misJ, susJ, misS, susS;
 
     private TextView hora;
     private Calendar c;
@@ -142,6 +146,39 @@ public class Contador extends Activity implements MessageApi.MessageListener,
                 return true;
             }
         });
+
+        PendingResult<DataItemBuffer> resultado = Wearable.DataApi.getDataItems(apiClient);
+        resultado.setResultCallback(new ResultCallback<DataItemBuffer>() {
+            @Override
+            public void onResult(DataItemBuffer dataItems) {
+                for (DataItem dataItem : dataItems) {
+                    if (dataItem.getUri().getPath().equals(MOBILE_PUNTUACION)) {
+                        DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+                        misP = dataMap.getString(KEY_MIS_PUNTOS);
+                        susP = dataMap.getString(KEY_SUS_PUNTOS);
+                        misJ = dataMap.getByte(KEY_MIS_JUEGOS);
+                        susJ = dataMap.getByte(KEY_SUS_JUEGOS);
+                        misS = dataMap.getByte(KEY_MIS_SETS);
+                        susS = dataMap.getByte(KEY_SUS_SETS);
+
+                        Log.e("WEAR", "getBytes ---------------");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                misPuntos.setText(misP);
+                                misJuegos.setText(Integer.toString(misJ));
+                                misSets.setText(Integer.toString(misS));
+                                susPuntos.setText(susP);
+                                susJuegos.setText(Integer.toString(susJ));
+                                susSets.setText(Integer.toString(susS));
+                                Log.e("WEAR", "On UI run setText ---------------");
+                            }
+                        });
+                    }
+                }
+                dataItems.release();
+            }
+        });
     }
 
     void actualizaNumeros(int i) {
@@ -158,14 +195,14 @@ public class Contador extends Activity implements MessageApi.MessageListener,
         Log.e("Padel Wear", "Sincronizando");
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(
                 WEAR_PUNTUACION);
-        putDataMapReq.getDataMap().putByte(KEY_MIS_PUNTOS, partida
-                .getMisPuntosByte());
+        putDataMapReq.getDataMap().putString(KEY_MIS_PUNTOS, partida
+                .getMisPuntos());
         putDataMapReq.getDataMap().putByte(KEY_MIS_JUEGOS, partida
                 .getMisJuegosByte());
         putDataMapReq.getDataMap().putByte(KEY_MIS_SETS, partida
                 .getMisSetsByte());
-        putDataMapReq.getDataMap().putByte(KEY_SUS_PUNTOS, partida
-                .getSusPuntosByte());
+        putDataMapReq.getDataMap().putString(KEY_SUS_PUNTOS, partida
+                .getSusPuntos());
         putDataMapReq.getDataMap().putByte(KEY_SUS_JUEGOS, partida
                 .getSusJuegosByte());
         putDataMapReq.getDataMap().putByte(KEY_SUS_SETS, partida
@@ -203,8 +240,8 @@ public class Contador extends Activity implements MessageApi.MessageListener,
                 DataItem item = evento.getDataItem();
                 if (item.getUri().getPath().equals(MOBILE_PUNTUACION)) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    misP = dataMap.getByte(KEY_MIS_PUNTOS);
-                    susP = dataMap.getByte(KEY_SUS_PUNTOS);
+                    misP = dataMap.getString(KEY_MIS_PUNTOS);
+                    susP = dataMap.getString(KEY_SUS_PUNTOS);
                     misJ = dataMap.getByte(KEY_MIS_JUEGOS);
                     susJ = dataMap.getByte(KEY_SUS_JUEGOS);
                     misS = dataMap.getByte(KEY_MIS_SETS);
@@ -231,10 +268,10 @@ public class Contador extends Activity implements MessageApi.MessageListener,
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            misPuntos.setText(Integer.toString(misP));
+                            misPuntos.setText(misP);
                             misJuegos.setText(Integer.toString(misJ));
                             misSets.setText(Integer.toString(misS));
-                            susPuntos.setText(Integer.toString(susP));
+                            susPuntos.setText(susP);
                             susJuegos.setText(Integer.toString(susJ));
                             susSets.setText(Integer.toString(susS));
                             Log.e("MOVIL", "On UI run setText ---------------");

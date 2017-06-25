@@ -87,9 +87,9 @@ public class Partida {
         return partidaRehacer;
     }
 
-    public byte getMisPuntosByte() {
-        return Byte.parseByte(Puntuacion.puntos[puntos.lastElement().getMiPuntuacion()]);
-    }
+//    public byte getMisPuntosByte() {
+//        return Byte.parseByte(Puntuacion.puntos[puntos.lastElement().getMiPuntuacion()]);
+//    }
 
     public byte getMisJuegosByte() {
         return puntos.lastElement().getMisJuegos();
@@ -99,9 +99,9 @@ public class Partida {
         return puntos.lastElement().getMisSets();
     }
 
-    public byte getSusPuntosByte() {
-        return Byte.parseByte(Puntuacion.puntos[puntos.lastElement().getSuPuntuacion()]);
-    }
+//    public byte getSusPuntosByte() {
+//        return Byte.parseByte(Puntuacion.puntos[puntos.lastElement().getSuPuntuacion()]);
+//    }
 
     public byte getSusJuegosByte() {
         return puntos.lastElement().getSusJuegos();
