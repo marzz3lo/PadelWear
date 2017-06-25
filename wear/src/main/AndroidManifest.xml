@@ -37,6 +37,7 @@
         <activity android:name=".Contador" android:theme="@style/AppThemeNoSwipeToDismiss"/>
         <activity android:name=".Pasos2"/>
         <activity android:name=".Cardiaco"/>
+        <activity android:name=".ContadorForSwipe" android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

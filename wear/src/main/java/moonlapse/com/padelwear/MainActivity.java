@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    String[] elementos = {"Partida", "Terminar partida", "Historial", "Jugadores", "Pasos", "Pasos2", "Pulsaciones", "Terminar partida"};
+    String[] elementos = {"Partida", "Confirmar", "Historial", "Jugadores", "Pasos", "Pasos2", "Pulsaciones", "Partida c/swipe"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,9 @@ public class MainActivity extends Activity {
                         break;
                     case 6:
                         startActivity(new Intent(MainActivity.this, Cardiaco.class));
+                        break;
+                    case 7:
+                        startActivity(new Intent(MainActivity.this, ContadorForSwipe.class));
                         break;
 
                 }

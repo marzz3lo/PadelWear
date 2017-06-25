@@ -1,6 +1,5 @@
 package moonlapse.com.padelwear;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -52,7 +51,7 @@ import moonlapse.com.comun.Partida;
  * Created by marzzelo on 24/6/2017.
  */
 
-public class Contador extends WearableActivity implements MessageApi.MessageListener,
+public class ContadorForSwipe extends WearableActivity implements MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks, DataApi.DataListener {
     private Partida partida;
     private TextView misPuntos, misJuegos, misSets, susPuntos, susJuegos, susSets;
@@ -88,7 +87,7 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.contador);
+        setContentView(R.layout.contador_swipedismiss);
         setAmbientEnabled();
         c = Calendar.getInstance();
         c.setTime(new Date());
@@ -116,7 +115,7 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
         actualizaNumeros(3);
         View fondo = findViewById(R.id.fondo);
         fondo.setOnTouchListener(new View.OnTouchListener() {
-            GestureDetector detector = new DireccionesGestureDetector(Contador.this, new DireccionesGestureDetector.SimpleOnDireccionesGestureListener() {
+            GestureDetector detector = new DireccionesGestureDetector(ContadorForSwipe.this, new DireccionesGestureDetector.SimpleOnDireccionesGestureListener() {
                 @Override
                 public boolean onArriba(MotionEvent e1, MotionEvent e2, float distX, float distY) {
                     partida.rehacerPunto();
@@ -146,7 +145,7 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
             }
         });
         misPuntos.setOnTouchListener(new View.OnTouchListener() {
-            GestureDetector detector = new DireccionesGestureDetector(Contador.this, new DireccionesGestureDetector.SimpleOnDireccionesGestureListener() {
+            GestureDetector detector = new DireccionesGestureDetector(ContadorForSwipe.this, new DireccionesGestureDetector.SimpleOnDireccionesGestureListener() {
                 @Override
                 public boolean onDerecha(MotionEvent e1, MotionEvent e2, float distX, float distY) {
                     partida.puntoPara(true);
@@ -168,7 +167,7 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
             }
         });
         susPuntos.setOnTouchListener(new View.OnTouchListener() {
-            GestureDetector detector = new DireccionesGestureDetector(Contador.this, new DireccionesGestureDetector.SimpleOnDireccionesGestureListener() {
+            GestureDetector detector = new DireccionesGestureDetector(ContadorForSwipe.this, new DireccionesGestureDetector.SimpleOnDireccionesGestureListener() {
                 @Override
                 public boolean onDerecha(MotionEvent e1, MotionEvent e2, float distX, float distY) {
                     partida.puntoPara(false);
@@ -222,6 +221,17 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
                 dataItems.release();
             }
         });
+
+        SwipeDismissFrameLayout root = (SwipeDismissFrameLayout) findViewById(R.id.swipe_dismiss_root);
+        root.addCallback(new SwipeDismissFrameLayout.Callback() {
+
+            @Override
+            public void onDismissed(SwipeDismissFrameLayout layout) {
+
+                finish();
+            }
+        });
+
     }
 
     @Override
