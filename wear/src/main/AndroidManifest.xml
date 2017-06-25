@@ -5,6 +5,9 @@
     <uses-feature android:name="android.hardware.type.watch"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-feature android:name="android.hardware.sensor.stepcounter" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
+    <uses-feature android:name="android.hardware.sensor.heartrate" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +35,8 @@
         <activity android:name=".CuentaAtras"/>
         <activity android:name=".Jugadores"/>
         <activity android:name=".Contador" android:theme="@style/AppThemeNoSwipeToDismiss"/>
+        <activity android:name=".Pasos2"/>
+        <activity android:name=".Cardiaco"/>
     </application>
 
 </manifest>
