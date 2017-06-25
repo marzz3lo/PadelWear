@@ -87,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+
+        if (id == R.id.action_notificaciones) {
+            startActivity(new Intent(this, Notificaciones.class));
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

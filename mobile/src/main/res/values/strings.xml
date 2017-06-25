@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Padel Wear</string>
     <string name="action_settings">Settings</string>
+    <string-array name="opciones_respuesta">
+        <item>Si</item>
+        <item>No</item>
+        <item>Preguntar después</item>
+    </string-array>
 </resources>
