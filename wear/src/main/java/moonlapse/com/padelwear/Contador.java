@@ -304,6 +304,23 @@ public class Contador extends WearableActivity implements MessageApi.MessageList
                     misS = dataMap.getByte(KEY_MIS_SETS);
                     susS = dataMap.getByte(KEY_SUS_SETS);
 
+                    switch (dataMap.getInt(KEY_EQUIPO)){
+                        case -1:
+                            partida.deshacerPunto();
+                            break;
+                        case 0:
+                            partida.rehacerPunto();
+                            break;
+                        case 1:
+                            partida.puntoPara(true);
+                            break;
+                        case 2:
+                            partida.puntoPara(false);
+                            break;
+                        default:
+                            break;
+                    }
+
                     Log.e("WEAR","getBytes ---------------");
                     runOnUiThread(new Runnable() {
                         @Override public void run() {
