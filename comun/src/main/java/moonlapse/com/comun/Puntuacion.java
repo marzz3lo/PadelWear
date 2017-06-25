@@ -13,13 +13,13 @@ public class Puntuacion {
 //		miPuntuacion = suPuntuacion = misJuegos = susJuegos = misSets = susSets = 0;
     }
 
-    Puntuacion(byte miPuntuacion, byte suPuntuacion, byte misJuegos,
+    public Puntuacion(byte miPuntuacion, byte suPuntuacion, byte misJuegos,
                byte susJuegos, byte misSets, byte susSets) {
         this.miPuntuacion = miPuntuacion;
         this.suPuntuacion = suPuntuacion;
         this.misJuegos = misJuegos;
         this.susJuegos = susJuegos;
-        this.misSets = susSets;
+        this.misSets = misSets;
         this.susSets = susSets;
     }
 

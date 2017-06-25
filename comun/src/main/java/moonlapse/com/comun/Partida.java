@@ -6,6 +6,11 @@ public class Partida {
     private Vector<Puntuacion> puntos;
     private Vector<Puntuacion> partidaRehacer;
 
+    public Partida(Vector<Puntuacion> puntos, Vector<Puntuacion> partidaRehacer) {
+        this.puntos = puntos;
+        this.partidaRehacer = partidaRehacer;
+    }
+
     public Partida() {
         puntos = new Vector<Puntuacion>();
         puntos.add(new Puntuacion());
@@ -64,11 +69,45 @@ public class Partida {
         return String.valueOf(puntos.lastElement().getSusJuegos());
     }
 
-    public String getMisSets(){
+    public String getMisSets() {
         return String.valueOf(puntos.lastElement().getMisSets());
     }
 
     public String getSusSets() {
         return String.valueOf(puntos.lastElement().getSusSets());
+    }
+
+
+
+    public Vector<Puntuacion> getPuntos() {
+        return puntos;
+    }
+
+    public Vector<Puntuacion> getPartidaRehacer() {
+        return partidaRehacer;
+    }
+
+    public byte getMisPuntosByte() {
+        return Byte.parseByte(Puntuacion.puntos[puntos.lastElement().getMiPuntuacion()]);
+    }
+
+    public byte getMisJuegosByte() {
+        return puntos.lastElement().getMisJuegos();
+    }
+
+    public byte getMisSetsByte() {
+        return puntos.lastElement().getMisSets();
+    }
+
+    public byte getSusPuntosByte() {
+        return Byte.parseByte(Puntuacion.puntos[puntos.lastElement().getSuPuntuacion()]);
+    }
+
+    public byte getSusJuegosByte() {
+        return puntos.lastElement().getSusJuegos();
+    }
+
+    public byte getSusSetsByte() {
+        return puntos.lastElement().getSusSets();
     }
 }
